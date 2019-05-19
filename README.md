@@ -6,11 +6,7 @@ Discord Mass DM Bot for mass advertising and whatever you want!
 
 Install NodeJS: https://nodejs.org/en/download/
 
-Run this command in console
-
-```
-npm install
-```
+Run the batch file titled `install.bat`
 
 ## Userscript
 
