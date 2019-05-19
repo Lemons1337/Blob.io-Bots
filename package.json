@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "proxy-agent": "^3.1.0",
+    "ws": "^7.0.0"
+  }
+}
