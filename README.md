@@ -15,7 +15,7 @@ npm install
 ## Userscript
 
 Install Tampermonkey: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
-Place userscript
+Place userscript from script.js into tampermonkey
 
 ## Starting
 
