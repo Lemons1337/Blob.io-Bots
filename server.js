@@ -5,7 +5,7 @@ const fs = require('fs');
 const proxies = fs.readFileSync('./proxies.txt', 'utf-8').replace(/\r/g, '').split('\n');
 
 const nick = 'Agar API';
-const botAmount = 300;
+const botAmount = 900;
 
 class Bot {
     constructor(server, id) {
@@ -20,8 +20,14 @@ class Bot {
         this.ws = new WebSocket(this.server, ['1', '3', 'WaWdft'].join(', '), {
             agent: new proxyAgent('http://' + this.proxy),
             headers: {
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Cache-Control': 'no-cache',
+                'Connection': 'Upgrade',
                 'Origin': 'https://client.blobgame.io',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
+                'Pragma': 'no-cache',
+                'Upgrade': 'websocket',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36'
             }
         });
         this.ws.binaryType = 'nodebuffer';
@@ -37,9 +43,13 @@ class Bot {
     spawn() {
         var skins = ['fly', 'fish', 'amber', 'spider', 'small_chick', 'carp', 'lobster', 'wasp', 'gopher', 'chick', 'sea_turtle', 'octopus', 'lizard', 'rabbit', 'pug', 'mouse', 'birdie', 'bat', 'owl', 'squirrel', 'rooster', 'cat', 'snake', 'crow', 'parrot', 'prey', 'chihuahua', 'fox', 'desert_fox', 'pig', 'dog', 'blackcat', 'coyote', 'goat', 'deer', 'bullking', 'seal', 'fury_cat', 'penguin', 'blueswirl', 'sly', 'husky', 'sheep', 'panda', 'cute_panda', 'angry_panda', 'bear', 'bear_', 'bearr', 'rhino_boxer', 'cougar', 'wolf', 'wolff', 'spirxo', 'sabertooth', 'panther', 'kempo_tiger', 'dark_wings', 'firebird', 'wolf_', 'lion_', 'yeti', 'lion', 'leo', 'king_lion', 'crocodile', 'croc', 'jackal', 'taurus', 'shark', 'colossus', 'orc_grunt', 'behemoth', 'mammoth', 'silver_tusk', 'dragon', 'beast', 'raptor', 't_rex', 'godzilla', 'basilisk', 'sentinel', 'poseidon', 'kraken', 'red_fiend', 'wendigo', 'jotun', 'ice_lord', 'medusa', 'reaper'];
         var skin = skins[~~(Math.random() * skins.length)];
-        var name = `<${skin}>${nick}`;
+        var rand = Math.random().toString(36).slice(2 + ~~(Math.random() * 6)); // temporary
+        var name = `<${skin}>${rand}`;
         var buf = Buffer.alloc(1 + Buffer.byteLength(name, 'utf16le'));
         buf.write(name, 1, 'utf16le');
+        this.send(buf);
+        buf = Buffer.alloc(1);
+        buf.writeUInt8(1, 0);
         this.send(buf);
     }
     sendChat(message) {
@@ -61,6 +71,9 @@ class Bot {
         buf = Buffer.alloc(5);
         buf.writeUInt8(255, 0);
         buf.writeUInt32LE(154669603, 1);
+        this.send(buf);
+
+        buf = Buffer.from([5, 2, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 248, 127, 0, 0, 0, 0, 0, 131, 108, 101, 170]);
         this.send(buf);
     }
     stop() {
