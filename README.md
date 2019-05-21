@@ -1,6 +1,6 @@
 ## Blob.io Bots
 
-Discord Mass DM Bot for mass advertising and whatever you want!
+Blob.io bots to follow cursor, feed user and team!
 
 ## Installation
 
