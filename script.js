@@ -10,9 +10,24 @@
 // ==/UserScript==
 
 window.addEventListener("load", () => {
-    html.onScriptDownloaded(`
+    let ui = document.createElement('div');
+    ui.id = 'botcanvas';
+    ui.style['background'] = 'rgba(0,0,0,0.4)';
+    ui.style['top'] = '250px';
+    ui.style['left'] = '17px';
+    ui.style['display'] = 'block';
+    ui.style['position'] = 'absolute';
+    ui.style['text-align'] = 'center';
+    ui.style['font-size'] = '15px';
+    ui.style['color'] = '#FFFFFF';
+    ui.style['padding'] = '7px';
+    ui.style['z-index'] = '1000000';
+    ui.innerHTML += 'Agar API';
+    let count = document.createElement('span');
+    ui.appendChild(count);
+    document.body.appendChild(ui);
+    html.onScriptDownloaded(function () {
         class User {
-
             constructor() {
                 this.wsIp = 'ws://localhost:8080';
                 this.started = false;
@@ -23,7 +38,6 @@ window.addEventListener("load", () => {
                 this.mouse = 0;
                 this.ws = null;
                 this.connect();
-                this.addUI();
             }
 
             connect() {
@@ -56,9 +70,7 @@ window.addEventListener("load", () => {
 
             }
 
-            onmessage(message) {
-                document.getElementById('botCount').innerText = message.data;
-            }
+            onmessage(message) {}
 
             onclose() {
                 setTimeout(this.connect(), 1500);
@@ -78,34 +90,6 @@ window.addEventListener("load", () => {
                 this.send({
                     type: 'stop'
                 });
-            }
-
-            addUI() {
-                let ui = document.createElement('div');
-                ui.id = 'botcanvas';
-                ui.style['background'] = 'rgba(0,0,0,0.4)';
-                ui.style['top'] = '250px';
-                ui.style['left'] = '17px';
-                ui.style['display'] = 'block';
-                ui.style['position'] = 'absolute';
-                ui.style['text-align'] = 'center';
-                ui.style['font-size'] = '15px';
-                ui.style['color'] = '#FFFFFF';
-                ui.style['padding'] = '7px';
-                ui.style['z-index'] = '1000000';
-                ui.innerHTML += 'Bots: ';
-                let count = document.createElement('span');
-                count.id = 'botCount';
-                count.innerHTML = 'WAITING';
-                ui.appendChild(count);
-                document.body.appendChild(ui);
-                document.getElementById('botcanvas').onclick = () => {
-                    if (!this.started)
-                        this.startBots();
-                    else
-                        this.stopBots();
-                    this.started = !this.started;
-                };
             }
 
             onerror() { }
@@ -137,38 +121,38 @@ window.addEventListener("load", () => {
             }
 
         }
-            window.client = new User();
-            window.started = false;
-            document.addEventListener('keydown', window.client.keyDown.bind(window.client));
-            (function () {
-                WebSocket.prototype._send = WebSocket.prototype.send;
-                WebSocket.prototype.send = function (data) {
-                    this._send(data);
-                    var buf = new Uint8Array(data.buffer ? data.buffer : data);
-                    switch (buf[0]) {
-                        case 16:
-                            window.client.mouse = [...buf];
-                            break;
+        window.client = new User();
+        window.started = false;
+        document.addEventListener('keydown', window.client.keyDown.bind(window.client));
+        (function () {
+            WebSocket.prototype._send = WebSocket.prototype.send;
+            WebSocket.prototype.send = function (data) {
+                this._send(data);
+                var buf = new Uint8Array(data.buffer ? data.buffer : data);
+                switch (buf[0]) {
+                    case 16:
+                        window.client.mouse = [...buf];
+                        break;
 
-                        case 255:
-                            if (!window.started) client.startBots();
-                            window.started = true;
-                            break;
+                    case 255:
+                        if (!window.started) client.startBots();
+                        window.started = true;
+                        break;
 
-                        case 22:
-                            client.send({
-                                type: 'split'
-                            });
-                            break;
+                    case 22:
+                        client.send({
+                            type: 'split'
+                        });
+                        break;
 
-                        case 23:
-                            this.send({
-                                type: 'eject'
-                            });
-                            break;
-                    }
-                    window.client.server = this.url;
-                };
-            })();
-    `);
+                    case 23:
+                        this.send({
+                            type: 'eject'
+                        });
+                        break;
+                }
+                window.client.server = this.url;
+            };
+        })();
+    }.toString().split('\n').slice(1, -1).join('\n'));
 });
